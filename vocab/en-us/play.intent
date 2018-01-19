@@ -1,0 +1,6 @@
+play {station} radio
+{station} radio
+listen to {station} radio
+start streaming {station}
+stream {station} (music|radio)
+{play|stream} my favorite radio station
