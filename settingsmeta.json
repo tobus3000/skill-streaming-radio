@@ -28,7 +28,7 @@
                 "name": "2GB Sydney URL",
                 "fields": [
                     {
-                        "name": "2 g b",
+                        "name": "2 gb",
                         "type": "text",
                         "label": "2GB",
                         "value": "http://shoutcast.2gb.com:8000/2gb"
@@ -50,7 +50,7 @@
                 "name": "2 CH URL",
                 "fields": [
                     {
-                        "name": "2 c h",
+                        "name": "2 ch",
                         "type": "text",
                         "label": "2ch",
                         "value": "http://shoutcast.2gb.com/2ch;audio.mp3?hash=1489396638519"
