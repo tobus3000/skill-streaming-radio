@@ -45,23 +45,23 @@ class InternetRadioSkill(MycroftSkill):
             self.audioservice = AudioService(self.emitter)
 
     def handle_play_intent(self, message):
-		self.stop()  # ???? Just in case something is already playing ????
-		station = message.data.get('station')
-		LOGGER.info('Requested Station is ' + station)   
-		LOGGER.info('Stream URL: ' + self.settings[station])
-		# check if the station has been defined
+        self.stop()  # ???? Just in case something is already playing ????
+        station = message.data.get('station')
+        LOGGER.info('Requested Station is ' + station)   
+        LOGGER.info('Stream URL: ' + self.settings[station])
+        # check if the station has been defined
 #                try:
-        	LOGGER.info('Settings: ' + str(self.settings))
-		stream_url = self.settings[station]
-	 	LOGGER.info('Stream URL: ' + stream_url)
-		if stream_url:
-                    LOGGER.info('Made it here')
-		    self.speak_dialog('start')
-		    time.sleep(4)
-		    if self.audioservice:
-			self.audioservice.play(self.settings[station])
-		    else: # othervice use normal mp3 playback
-			self.process = play_mp3(self.settings[station])
+        LOGGER.info('Settings: ' + str(self.settings))
+        stream_url = self.settings[station]
+        LOGGER.info('Stream URL: ' + stream_url)
+        if stream_url:
+            LOGGER.info('Made it here')
+            self.speak_dialog('start')
+            time.sleep(4)
+            if self.audioservice:
+                self.audioservice.play(self.settings[station])
+            else: # othervice use normal mp3 playback
+                self.process = play_mp3(self.settings[station])
 #		except:
 #			self.speak_dialog('StationNotFound')
              
