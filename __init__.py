@@ -62,8 +62,8 @@ class InternetRadioSkill(MycroftSkill):
                     self.audioservice.play(self.settings[station])
                 else: # othervice use normal mp3 playback
                     self.process = play_mp3(self.settings[station])
-		except:
-			self.speak_dialog('StationNotFound')
+        except:
+            self.speak_dialog('StationNotFound')
              
     def handle_stop(self, message):
         self.stop()
