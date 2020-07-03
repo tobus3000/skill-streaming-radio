@@ -19,63 +19,64 @@ import time
 
 #from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill #, intent_file_handler
+from mycroft.skills.common_play_skill import CommonPlaySkill, CPSMatchLevel
+from mycroft.util.parse import match_one
 from mycroft.util.log import getLogger
-try:
-    from mycroft.skills.audioservice import AudioService
-except:
-    from mycroft.util import play_mp3
-    AudioService = None
+#try:
+#    from mycroft.skills.audioservice import AudioService
+#except:
+#    from mycroft.util import play_mp3
+#    AudioService = None
 
 __author__ = 'nmoore'
 
 
 LOGGER = getLogger(__name__)
 
+track_dict = {
+    'bomb jack': 'http://remix.kwed.org/files/RKOfiles/Chronblom%20-%20Bomb%20Jack%20subtune%206%20(violin%20version).mp3',
+    'druid': 'http://remix.kwed.org/files/RKOfiles/Revel%20Craft%20-%20Druid.mp3',
+    'crazy comets':  'http://remix.kwed.org/files/RKOfiles/Makke%20-%20Crazy%20Comets%20(Komet%20Non-Stop).mp3',
+    'boulder dash': 'http://remix.kwed.org/files/RKOfiles/Mahoney%20-%20BoulderDash%20(Commodore%2069%20mix).mp3',
+    'garfield': 'http://remix.kwed.org/files/RKOfiles/Reyn%20Ouwehand%20-%20Garfield.mp3'
+}
 
-class InternetRadioSkill(MycroftSkill):
+class InternetRadioSkill(CommonPlaySkill):
     def __init__(self):
         super(InternetRadioSkill, self).__init__(name="StreamingRadioSkill")
         self.audioservice = None
         self.process = None
 
-    def initialize(self):
-        self.register_intent_file('play.intent', self.handle_play_intent)
-   
-        if AudioService:
-            self.audioservice = AudioService(self.emitter)
+    def CPS_match_query_phrase(self, phrase):
+        """ This method responds wether the skill can play the input phrase.
 
-    def handle_play_intent(self, message):
-        self.stop()  # ???? Just in case something is already playing ????
-        station = message.data.get('station')
-        # check if the station has been defined
-        try:
-            LOGGER.info('Requested Station is ' + station)   
-            LOGGER.info('Stream URL: ' + self.settings[station])
-            LOGGER.info('Settings: ' + str(self.settings))
-            stream_url = self.settings[station]
-            LOGGER.info('Stream URL: ' + stream_url)
-            if stream_url:
-                LOGGER.info('Made it here')
-                self.speak_dialog('start')
-                time.sleep(4)
-                if self.audioservice:
-                    self.audioservice.play(self.settings[station])
-                else: # othervice use normal mp3 playback
-                    self.process = play_mp3(self.settings[station])
-        except:
-            self.speak_dialog('StationNotFound')
-             
-    def handle_stop(self, message):
-        self.stop()
-        self.speak_dialog('streaming.radio.stop')
+            The method is invoked by the PlayBackControlSkill.
 
-    def stop(self):
-        if self.audioservice:
-           self.audioservice.stop()
+            Returns: tuple (matched phrase(str),
+                            match level(CPSMatchLevel),
+                            optional data(dict))
+                     or None if no match was found.
+        """
+        # Get match and confidence
+        match, confidence = match_one(phrase, track_dict)
+        # If the confidence is high enough return a match
+        if confidence > 0.5:
+            return (match, CPSMatchLevel.TITLE, {"track": match})
+        # Otherwise return None
         else:
-            if self.process and self.process.poll() is None:
-               self.process.terminate()
-               self.process.wait()
+            return None
+
+    def CPS_start(self, phrase, data):
+        """ Starts playback.
+
+            Called by the playback control skill to start playback if the
+            skill is selected (has the best match level)
+        """
+        # Retrieve the track url from the data
+        url = data['track']
+        self.audioservice.play(url)  # Send url to audioservice to start playback
+
+ 
 
 def create_skill():
     return InternetRadioSkill()
