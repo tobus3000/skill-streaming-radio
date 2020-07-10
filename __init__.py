@@ -74,7 +74,7 @@ class InternetRadioSkill(CommonPlaySkill):
         """
         # Retrieve the track url from the data
         url = data['track']
-        self.audioservice.play(url)  # Send url to audioservice to start playback
+        return self.audioservice.play(url)  # Send url to audioservice to start playback
 
  
 
